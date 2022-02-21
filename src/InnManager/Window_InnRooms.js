@@ -11,6 +11,7 @@ class Window_InnRooms extends Window_ItemList {
         super.initialize(rect);
         this.refresh();
         this.activate();
+        this.forceSelect(0);
     }
 
     maxCols() {
@@ -25,6 +26,7 @@ class Window_InnRooms extends Window_ItemList {
         }
     }
 
+
     drawItem(index) {
         const item = this.itemAt(index);
         if(item){
@@ -36,12 +38,17 @@ class Window_InnRooms extends Window_ItemList {
     }
 
     canBuy(item){
-        return true;
-        /*
         return $gameParty.gold() >= item.price;
-
-         */
     }
+
+    item() {
+        return super.item();
+    }
+
+    isEnabled(item){
+        return $gameParty.gold() >= item.price;
+    }
+
 
     /**
      *
@@ -67,7 +74,7 @@ class Window_InnRooms extends Window_ItemList {
      * @param{Room} item
      */
     setHelpWindowRoom(item){
-        console.log(item);
+
         if(this._helpWindow && item !== null){
 
             this._helpWindow.setText(item.description);

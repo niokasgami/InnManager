@@ -305,40 +305,6 @@ this.Gear.Inn = (function (exports) {
 
     }
 
-    class Window_InnCommand extends Window_Command {
-        constructor() {
-            super(...arguments);
-        }
-
-        initialize(rect) {
-            super.initialize(rect);
-        }
-
-        makeCommandList() {
-            const rooms = InnManager.rooms();
-            for(const room of rooms){
-                const enabled = this.canAffordRoom(room.price);
-                this.addCommand(room.name,room.name,enabled);
-            }
-        }
-        updateHelp() {
-            super.updateHelp();
-            this._helpWindow.setText(InnManager.room(this.index()).description);
-        }
-
-
-        /**
-         * return if the party has enough gold
-         * @param {number} room
-         * @returns {boolean}
-         */
-        canAffordRoom(room){
-            return $gameParty.gold() >= room;
-        }
-
-
-    }
-
     class Window_InnRooms extends Window_ItemList {
 
         constructor() {
@@ -349,6 +315,7 @@ this.Gear.Inn = (function (exports) {
             super.initialize(rect);
             this.refresh();
             this.activate();
+            this.forceSelect(0);
         }
 
         maxCols() {
@@ -363,6 +330,7 @@ this.Gear.Inn = (function (exports) {
             }
         }
 
+
         drawItem(index) {
             const item = this.itemAt(index);
             if(item){
@@ -374,12 +342,17 @@ this.Gear.Inn = (function (exports) {
         }
 
         canBuy(item){
-            return true;
-            /*
             return $gameParty.gold() >= item.price;
-
-             */
         }
+
+        item() {
+            return super.item();
+        }
+
+        isEnabled(item){
+            return $gameParty.gold() >= item.price;
+        }
+
 
         /**
          *
@@ -405,7 +378,7 @@ this.Gear.Inn = (function (exports) {
          * @param{Room} item
          */
         setHelpWindowRoom(item){
-            console.log(item);
+
             if(this._helpWindow && item !== null){
 
                 this._helpWindow.setText(item.description);
@@ -461,6 +434,7 @@ this.Gear.Inn = (function (exports) {
             this._windowRoom.setHandler('ok',this.onRoomOk.bind(this));
             this._windowRoom.setHandler('cancel', this.popScene.bind(this));
             this.addWindow(this._windowRoom);
+            console.log(this._windowRoom);
         }
 
         /**
@@ -468,8 +442,9 @@ this.Gear.Inn = (function (exports) {
          * @param {Room} item
          */
         onRoomOk(item){
-            $gameParty.loseGold(item.price);
-            InnManager.executeAction(item.func,item.args);
+            console.log(item);
+        //    $gameParty.loseGold(item.price);
+        //    InnManager.executeAction(item.func,item.args);
         }
 
         createHeaderWindow(){

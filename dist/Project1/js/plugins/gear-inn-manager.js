@@ -200,16 +200,7 @@ static find(){const currentScript=document.currentScript.src.match(/.+\/(.+)\.js
          * find a inn via it's id
          * @param {string} name - the inn name
          * @returns {number}
-         */static findInn(name){let index=0;for(let i=0;i<this._inns.length;i++){const{id:id}=this._inns[i];if(id===name){index=0;break}}return index}}class Window_InnCommand extends Window_Command{constructor(){super(...arguments)}initialize(rect){super.initialize(rect)}makeCommandList(){const rooms=InnManager.rooms();for(const room of rooms){const enabled=this.canAffordRoom(room.price);this.addCommand(room.name,room.name,enabled)}}updateHelp(){super.updateHelp();this._helpWindow.setText(InnManager.room(this.index()).description)}
-/**
-         * return if the party has enough gold
-         * @param {number} room
-         * @returns {boolean}
-         */canAffordRoom(room){return $gameParty.gold()>=room}}class Window_InnRooms extends Window_ItemList{constructor(){super(...arguments)}initialize(rect){super.initialize(rect);this.refresh();this.activate()}maxCols(){return 1}makeItemList(){const rooms=InnManager.rooms();for(let i=0;i<rooms.length;i++){this._data.push(rooms[i])}}drawItem(index){const item=this.itemAt(index);if(item){const rect=this.itemLineRect(index);this.changePaintOpacity(this.canBuy(item));this.drawRoomName(item,rect.x,rect.y,rect.width);this.changePaintOpacity(1)}}canBuy(item){return true;
-/*
-            return $gameParty.gold() >= item.price;
-
-             */}
+         */static findInn(name){let index=0;for(let i=0;i<this._inns.length;i++){const{id:id}=this._inns[i];if(id===name){index=0;break}}return index}}class Window_InnRooms extends Window_ItemList{constructor(){super(...arguments)}initialize(rect){super.initialize(rect);this.refresh();this.activate();this.forceSelect(0)}maxCols(){return 1}makeItemList(){const rooms=InnManager.rooms();for(let i=0;i<rooms.length;i++){this._data.push(rooms[i])}}drawItem(index){const item=this.itemAt(index);if(item){const rect=this.itemLineRect(index);this.changePaintOpacity(this.canBuy(item));this.drawRoomName(item,rect.x,rect.y,rect.width);this.changePaintOpacity(1)}}canBuy(item){return $gameParty.gold()>=item.price}item(){return super.item()}isEnabled(item){return $gameParty.gold()>=item.price}
 /**
          *
          * @param {Room} item
@@ -220,15 +211,18 @@ static find(){const currentScript=document.currentScript.src.match(/.+\/(.+)\.js
 /**
          *
          * @param{Room} item
-         */setHelpWindowRoom(item){console.log(item);if(this._helpWindow&&item!==null){this._helpWindow.setText(item.description)}}refresh(){super.refresh()}}class Scene_Inn extends window.Scene_MenuBase{
+         */setHelpWindowRoom(item){if(this._helpWindow&&item!==null){this._helpWindow.setText(item.description)}}refresh(){super.refresh()}}class Scene_Inn extends window.Scene_MenuBase{
 /**
          *
          * @param {string} id - the inn id
          */
 prepare(id){this._id=id}constructor(){super(...arguments)}initialize(){super.initialize();InnManager.init(this._id);this._inn=InnManager.inn();this._roomId=0}start(){super.start();this.refreshInfo()}refreshInfo(){
 //    this._helpWindow.setText(this._inn.rooms[this._roomId].description);
-}create(){super.create();this.createInnNameWindow();this.createHelpWindow();this.createCommandWindow();this.createHeaderWindow();this.createGoldWindow()}createCommandWindow(){const rect=this.commandWindowRect();this._windowRoom=new Window_InnRooms(rect);this._windowRoom.setHelpWindow(this._helpWindow);this._windowRoom.setHandler("ok",this.onRoomOk.bind(this));this._windowRoom.setHandler("cancel",this.popScene.bind(this));this.addWindow(this._windowRoom)}
+}create(){super.create();this.createInnNameWindow();this.createHelpWindow();this.createCommandWindow();this.createHeaderWindow();this.createGoldWindow()}createCommandWindow(){const rect=this.commandWindowRect();this._windowRoom=new Window_InnRooms(rect);this._windowRoom.setHelpWindow(this._helpWindow);this._windowRoom.setHandler("ok",this.onRoomOk.bind(this));this._windowRoom.setHandler("cancel",this.popScene.bind(this));this.addWindow(this._windowRoom);console.log(this._windowRoom)}
 /**
          *
          * @param {Room} item
-         */onRoomOk(item){$gameParty.loseGold(item.price);InnManager.executeAction(item.func,item.args)}createHeaderWindow(){const rect=this.headerWindowRect();this._headerWindow=new Window_Help(rect);this._headerWindow.setText("Rooms");this.addWindow(this._headerWindow)}headerWindowRect(){const x=0;const y=this.mainAreaTop()+this.innNameWindowRect().y+10;const width=this.mainCommandWidth();const height=this.calcWindowHeight(1,false);return new Rectangle(x,y,width,height)}commandWindowRect(){const ww=this.mainCommandWidth();const wh=this.mainAreaHeight()-this.goldWindowRect().height-this.headerWindowRect().height-20;const wx=0;const wy=this.mainAreaTop()+this.headerWindowRect().height+10;return new Rectangle(wx,wy,ww,wh)}createGoldWindow(){const rect=this.goldWindowRect();this._goldWindow=new Window_Gold(rect);this.addWindow(this._goldWindow)}goldWindowRect(){const ww=this.mainCommandWidth();const wh=this.calcWindowHeight(1,true);const wx=0;const wy=this.mainAreaBottom()-80;return new Rectangle(wx,wy,ww,wh)}createInnNameWindow(){const rect=this.innNameWindowRect();this._innNameWindow=new Window_Help(rect);this._innNameWindow.setText(this._inn.displayName);this.addWindow(this._innNameWindow)}innNameWindowRect(){const x=0;const y=this.buttonY();const width=Graphics.boxWidth-this._cancelButton.width-30;const height=this.calcWindowHeight(1,false);return new Rectangle(x,y,width,height)}}exports.InnManager=InnManager;exports.Scene_Inn=Scene_Inn;Object.defineProperty(exports,"__esModule",{value:true});return exports}({});
+         */onRoomOk(item){console.log(item);
+//    $gameParty.loseGold(item.price);
+//    InnManager.executeAction(item.func,item.args);
+}createHeaderWindow(){const rect=this.headerWindowRect();this._headerWindow=new Window_Help(rect);this._headerWindow.setText("Rooms");this.addWindow(this._headerWindow)}headerWindowRect(){const x=0;const y=this.mainAreaTop()+this.innNameWindowRect().y+10;const width=this.mainCommandWidth();const height=this.calcWindowHeight(1,false);return new Rectangle(x,y,width,height)}commandWindowRect(){const ww=this.mainCommandWidth();const wh=this.mainAreaHeight()-this.goldWindowRect().height-this.headerWindowRect().height-20;const wx=0;const wy=this.mainAreaTop()+this.headerWindowRect().height+10;return new Rectangle(wx,wy,ww,wh)}createGoldWindow(){const rect=this.goldWindowRect();this._goldWindow=new Window_Gold(rect);this.addWindow(this._goldWindow)}goldWindowRect(){const ww=this.mainCommandWidth();const wh=this.calcWindowHeight(1,true);const wx=0;const wy=this.mainAreaBottom()-80;return new Rectangle(wx,wy,ww,wh)}createInnNameWindow(){const rect=this.innNameWindowRect();this._innNameWindow=new Window_Help(rect);this._innNameWindow.setText(this._inn.displayName);this.addWindow(this._innNameWindow)}innNameWindowRect(){const x=0;const y=this.buttonY();const width=Graphics.boxWidth-this._cancelButton.width-30;const height=this.calcWindowHeight(1,false);return new Rectangle(x,y,width,height)}}exports.InnManager=InnManager;exports.Scene_Inn=Scene_Inn;Object.defineProperty(exports,"__esModule",{value:true});return exports}({});

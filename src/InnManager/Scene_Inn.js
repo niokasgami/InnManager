@@ -1,6 +1,5 @@
 import {Scene_MenuBase} from "rmmz";
 import {InnManager} from "./InnManager";
-import {Window_InnCommand} from "./Window_InnCommand";
 import {Window_InnRooms} from "./Window_InnRooms";
 
 
@@ -48,15 +47,17 @@ class Scene_Inn extends Scene_MenuBase {
         this._windowRoom.setHandler('ok',this.onRoomOk.bind(this));
         this._windowRoom.setHandler('cancel', this.popScene.bind(this));
         this.addWindow(this._windowRoom);
+        console.log(this._windowRoom);
     }
 
-    /**
+    /**3
      *
      * @param {Room} item
      */
     onRoomOk(item){
-        $gameParty.loseGold(item.price);
-        InnManager.executeAction(item.func,item.args);
+        console.log(item);
+          $gameParty.loseGold(item.price);
+           InnManager.executeAction(item.func,item.args);
     }
 
     createHeaderWindow(){
