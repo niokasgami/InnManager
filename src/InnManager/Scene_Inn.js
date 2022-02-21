@@ -1,6 +1,7 @@
 import {Scene_MenuBase} from "rmmz";
 import {InnManager} from "./InnManager";
 import {Window_InnCommand} from "./Window_InnCommand";
+import {Window_InnRooms} from "./Window_InnRooms";
 
 
 class Scene_Inn extends Scene_MenuBase {
@@ -42,21 +43,14 @@ class Scene_Inn extends Scene_MenuBase {
 
     createCommandWindow(){
         const rect = this.commandWindowRect();
-        const rooms = this._inn.rooms;
-        this._commandWindow = new Window_InnCommand(rect);
-        for (const room of rooms){
-            const action = room.func;
-            const args = room.args;
-            this._commandWindow.setHandler(room.name,this.commandRoom.bind(this,action,args));
-        }
-        this._commandWindow.setHelpWindow(this._helpWindow);
-        this.addWindow(this._commandWindow);
+        this._windowRoom = new Window_InnRooms(rect);
+        this._windowRoom.setHelpWindow(this._helpWindow);
+        this._windowRoom.setHandler('ok',this.onRoomOk.bind(this));
+        this.addWindow(this._windowRoom);
     }
 
-    commandRoom(action,args){
-        console.log(args);
-        InnManager.executeAction(action,args);
-        this.popScene();
+    onRoomOk(item){
+
     }
 
     createHeaderWindow(){
