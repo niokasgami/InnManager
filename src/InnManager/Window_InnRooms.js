@@ -9,6 +9,8 @@ class Window_InnRooms extends Window_ItemList {
 
     initialize(rect) {
         super.initialize(rect);
+        this.refresh();
+        this.activate();
     }
 
     maxCols() {
@@ -21,12 +23,10 @@ class Window_InnRooms extends Window_ItemList {
         for(let i = 0; i < rooms.length; i++){
             this._data.push(rooms[i]);
         }
-        console.log(this._data);
     }
 
     drawItem(index) {
         const item = this.itemAt(index);
-        console.log(item);
         if(item){
             const rect = this.itemLineRect(index);
             this.changePaintOpacity(this.canBuy(item));
@@ -36,7 +36,11 @@ class Window_InnRooms extends Window_ItemList {
     }
 
     canBuy(item){
+        return true;
+        /*
         return $gameParty.gold() >= item.price;
+
+         */
     }
 
     /**
@@ -55,7 +59,7 @@ class Window_InnRooms extends Window_ItemList {
     }
 
     updateHelp() {
-        this.updateHelpRoom(this.item());
+        this.setHelpWindowRoom(this.item());
     }
 
     /**
@@ -63,14 +67,15 @@ class Window_InnRooms extends Window_ItemList {
      * @param{Room} item
      */
     setHelpWindowRoom(item){
-        if(this._helpWindow){
-            This._helpWindow.setText(item.description);
+        console.log(item);
+        if(this._helpWindow && item !== null){
+
+            this._helpWindow.setText(item.description);
         }
     }
 
     refresh() {
         super.refresh();
-        this.makeItemList();
     }
 }
 export {Window_InnRooms}

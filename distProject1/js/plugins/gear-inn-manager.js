@@ -347,6 +347,8 @@ this.Gear.Inn = (function (exports) {
 
         initialize(rect) {
             super.initialize(rect);
+            this.refresh();
+            this.activate();
         }
 
         maxCols() {
@@ -359,12 +361,10 @@ this.Gear.Inn = (function (exports) {
             for(let i = 0; i < rooms.length; i++){
                 this._data.push(rooms[i]);
             }
-            console.log(this._data);
         }
 
         drawItem(index) {
             const item = this.itemAt(index);
-            console.log(item);
             if(item){
                 const rect = this.itemLineRect(index);
                 this.changePaintOpacity(this.canBuy(item));
@@ -374,7 +374,11 @@ this.Gear.Inn = (function (exports) {
         }
 
         canBuy(item){
+            return true;
+            /*
             return $gameParty.gold() >= item.price;
+
+             */
         }
 
         /**
@@ -393,7 +397,7 @@ this.Gear.Inn = (function (exports) {
         }
 
         updateHelp() {
-            this.updateHelpRoom(this.item());
+            this.setHelpWindowRoom(this.item());
         }
 
         /**
@@ -401,14 +405,15 @@ this.Gear.Inn = (function (exports) {
          * @param{Room} item
          */
         setHelpWindowRoom(item){
-            if(this._helpWindow){
-                This._helpWindow.setText(item.description);
+            console.log(item);
+            if(this._helpWindow && item !== null){
+
+                this._helpWindow.setText(item.description);
             }
         }
 
         refresh() {
             super.refresh();
-            this.makeItemList();
         }
     }
 
@@ -454,11 +459,17 @@ this.Gear.Inn = (function (exports) {
             this._windowRoom = new Window_InnRooms(rect);
             this._windowRoom.setHelpWindow(this._helpWindow);
             this._windowRoom.setHandler('ok',this.onRoomOk.bind(this));
+            this._windowRoom.setHandler('cancel', this.popScene.bind(this));
             this.addWindow(this._windowRoom);
         }
 
+        /**
+         *
+         * @param {Room} item
+         */
         onRoomOk(item){
-
+            $gameParty.loseGold(item.price);
+            InnManager.executeAction(item.func,item.args);
         }
 
         createHeaderWindow(){

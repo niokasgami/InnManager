@@ -46,11 +46,17 @@ class Scene_Inn extends Scene_MenuBase {
         this._windowRoom = new Window_InnRooms(rect);
         this._windowRoom.setHelpWindow(this._helpWindow);
         this._windowRoom.setHandler('ok',this.onRoomOk.bind(this));
+        this._windowRoom.setHandler('cancel', this.popScene.bind(this));
         this.addWindow(this._windowRoom);
     }
 
+    /**
+     *
+     * @param {Room} item
+     */
     onRoomOk(item){
-
+        $gameParty.loseGold(item.price);
+        InnManager.executeAction(item.func,item.args);
     }
 
     createHeaderWindow(){
