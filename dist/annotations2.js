@@ -5,6 +5,12 @@
  * @base gear-inn-actions
  * @help
  *
+ * ==========================================================================
+ *  + Changelog
+ * --------------------------------------------------------------------------
+ *  + initial release
+ *  + many Inc0der-shrooms died for this plugin
+ *
  * @param inns
  * @type struct<Inn>[]
  */

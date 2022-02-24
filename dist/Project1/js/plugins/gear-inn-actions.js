@@ -38,12 +38,11 @@
  *     put quite simply the call is  composed of :
  *     + an action name which is used to fetch action when calling it
  *     + a function with a parameter args which is the body of the action
- *     + the argument args will always be an array,so it needs to be parsed
+ *     + the argument args will always be an array
  *
  *  + example :
  *   inn.registerAction("my action",(args) =>{
- *      const parsedArgs = JSON.parse(args);
- *      const myIntValue = parsedArgs[0];
+ *      const myIntValue = args[0];
  *   });
  *
  *  There's plenty of example below to understand how to use it!
@@ -59,8 +58,10 @@
  *  remember you can always shorten it!
  *
  *  so as said above you use the action name to call it, and you provide
- *  the arguments so the call can work. Do remember that args is always
- *  an array and that some actions don't require any args at all!
+ *  the arguments so the call can work. Do remember that single value args
+ *  will be converted automatically (i.e [10] -> 10) but if more than
+ *  one argument is used then treat as an array (i.e [10,12] -> [10,12])
+ *
  *
  * ==========================================================================
  *  + chaining an action
@@ -71,17 +72,14 @@
  *  then it's 100% viable to chain them!
  *  how to chain them:
  *   inn.registerAction("my action",(args) =>{
- *      const parsedArgs = JSON.parse(args);
- *      const myIntValue = parsedArgs[0];
- *      const newargs = [parsedArgs[2]];
+ *      const myIntValue = args[0];
+ *      const newargs = [args[2]];
  *      inn.executeAction("percentHeal",newargs);
  *   });
  *
  * It's simple as that! any action can be called inside another action
  * just remember if your action has args to adjust your args array in
- * consequence
- *
- *
+ * consequence in the plugin manager
  *
  */
 
@@ -104,8 +102,8 @@
      * and also heal for a percentage of your health
      */
     inn.registerAction("percent-heal", (args) => {
-        //const value = JSON.parse(args); not needed anymore
-        const percent = args[0];
+        const percent = args;
+        console.log(percent);
         const party = $gameParty.members();
         for (const actor of party) {
             const value = Math.round(percent * actor.mhp / 100);
@@ -118,15 +116,10 @@
      * and chain an existing action
      */
     inn.registerAction("give-status", (args) => {
-        // args are always an Array in this case it's an number
-       // const value = JSON.parse(args); // not needed anymore
-        const state = args[0]
+        const state = args;
         const party = $gameParty.members();
         for (const actor of party) {
-            console.log("state id is : " + state);
             actor.addState(state);
-
-            console.log(actor.states())
         }
         inn.executeAction("full-heal", []);
     });
@@ -135,8 +128,7 @@
      * another example for a specific amount of health can be also negative
      */
     inn.registerAction("specific-heal",(args)=> {
-        // const value = JSON.parse(args); // not needed anymore
-        const heal = args[0];
+        const heal = args;
         const party = $gameParty.members();
         for(const actor of party){
             actor.gainHp(heal);

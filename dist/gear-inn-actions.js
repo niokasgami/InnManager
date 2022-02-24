@@ -58,8 +58,10 @@
  *  remember you can always shorten it!
  *
  *  so as said above you use the action name to call it, and you provide
- *  the arguments so the call can work. Do remember that args is always
- *  an array and that some actions don't require any args at all!
+ *  the arguments so the call can work. Do remember that single value args
+ *  will be converted automatically (i.e [10] -> 10) but if more than
+ *  one argument is used then treat as an array (i.e [10,12] -> [10,12])
+ *
  *
  * ==========================================================================
  *  + chaining an action
@@ -100,7 +102,7 @@
      * and also heal for a percentage of your health
      */
     inn.registerAction("percent-heal", (args) => {
-        const percent = args[0];
+        const percent = args;
         console.log(percent);
         const party = $gameParty.members();
         for (const actor of party) {
@@ -114,7 +116,7 @@
      * and chain an existing action
      */
     inn.registerAction("give-status", (args) => {
-        const state = args[0];
+        const state = args;
         const party = $gameParty.members();
         for (const actor of party) {
             actor.addState(state);
@@ -126,7 +128,7 @@
      * another example for a specific amount of health can be also negative
      */
     inn.registerAction("specific-heal",(args)=> {
-        const heal = args[0];
+        const heal = args;
         const party = $gameParty.members();
         for(const actor of party){
             actor.gainHp(heal);

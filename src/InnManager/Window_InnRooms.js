@@ -41,10 +41,6 @@ class Window_InnRooms extends Window_ItemList {
         return $gameParty.gold() >= item.price;
     }
 
-    item() {
-        return super.item();
-    }
-
     isEnabled(item){
         return $gameParty.gold() >= item.price;
     }
@@ -84,5 +80,6 @@ class Window_InnRooms extends Window_ItemList {
     refresh() {
         super.refresh();
     }
+
 }
 export {Window_InnRooms}

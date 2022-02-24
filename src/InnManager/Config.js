@@ -10,3 +10,4 @@ const rawParams = Helper.find();
  * @type {InnParameters}
  */
 export const PARAMS = Helper.parse(rawParams);
+console.log(PARAMS);
