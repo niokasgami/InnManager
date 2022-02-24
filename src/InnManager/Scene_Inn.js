@@ -3,6 +3,7 @@ import {InnManager} from "./InnManager";
 import {Window_InnRooms} from "./Window_InnRooms";
 import {Window_InnConfirmation} from "./Window_InnConfirmation";
 import {Window_InnConfirmationTitle} from "./Window_InnConfirmationTitle";
+import {Window_InnResult} from "./Window_InnResult";
 
 
 class Scene_Inn extends Scene_MenuBase {
@@ -40,7 +41,7 @@ class Scene_Inn extends Scene_MenuBase {
         this.createGoldWindow();
         this.createConfirmWindow();
         this.createConfirmTitleWindow();
-        this.createResultsWindow();
+        this.createResultWindow();
     }
 
     update() {
@@ -78,12 +79,16 @@ class Scene_Inn extends Scene_MenuBase {
         SoundManager.playShop();
         // this.startFadeOut(this.slowFadeSpeed());
         const item = this._windowRoom.item();
+        const beforeSleep = JsonEx.makeDeepCopy($gameParty.members())
         $gameParty.loseGold(item.price);
         InnManager.executeAction(item.func, item.args);
+
+        this._windowResult.setMembersBeforeSleep(beforeSleep)
         this._confirmWindow.hide();
         this._confirmTitleWindow.hide();
-        this._windowRoom.show();
-        this._windowRoom.activate();
+        this._windowRoom.deactivate()
+        this._windowResult.show();
+        this._windowResult.activate()
     }
 
     onUnconfirm() {
@@ -93,11 +98,15 @@ class Scene_Inn extends Scene_MenuBase {
         this._windowRoom.activate();
     }
 
-    createResultsWindow() {
+    createResultWindow () {
         const rect = this.resultWindowRect();
-        this._resultWindow = new Window_Message(rect);
-        this.addWindow(this._resultWindow);
+        this._windowResult = new Window_InnResult(rect);
+        this._windowResult.setHandler("ok", this.onResultCancel.bind(this))
+        this._windowResult.setHandler("cancel", this.onResultCancel.bind(this))
+        this._windowResult.hide()
+        this.addWindow(this._windowResult);
     }
+
 
     resultWindowRect() {
         const width = Graphics.boxWidth - 100;
@@ -106,6 +115,12 @@ class Scene_Inn extends Scene_MenuBase {
         const y = Graphics.height / 2 - (height / 2);
         return new Rectangle(x,y,width,height);
     }
+
+    onResultCancel() {
+        this._windowResult.hide()
+        this._windowRoom.activate()
+    }
+
 
     createConfirmTitleWindow() {
         const rect = this.confirmTitleWindowRect();
@@ -158,7 +173,6 @@ class Scene_Inn extends Scene_MenuBase {
         const height = this.calcWindowHeight(1, false);
         return new Rectangle(x, y, width, height);
     }
-
 
     commandWindowRect() {
         const ww = this.mainCommandWidth();
